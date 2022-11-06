@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
+//Views components
 import HomeView from '../views/HomeView.vue'
+import DashboardView from '../components/dashboard/Dashboard.vue';
+
 
 Vue.use(VueRouter)
 
@@ -18,13 +22,18 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import(/* webpackChunkName: "about" */ '../components/auth/login.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../components/auth/Login.vue')
   },
   {
     path: '/register',
     name: 'register',
-    component: () => import(/* webpackChunkName: "about" */ '../components/auth/register.vue')
-  }
+    component: () => import(/* webpackChunkName: "about" */ '../components/auth/Register.vue')
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView
+  },
 ]
 
 const router = new VueRouter({
