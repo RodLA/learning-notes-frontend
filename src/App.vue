@@ -23,29 +23,34 @@
 </template>
 
 <script>
-
+import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'App',
 
   data: () => ({
-    loggedIn: false,
   }),
-
-  mounted(){
-    console.log('me estas viendo xd');
+  
+  created(){
+    this.checkUserState();
   },
 
-  created(){
-    if( localStorage.getItem('token') ){
-      this.loggedIn = true;
-    }
+  computed: {
+    ...mapGetters({
+      loggedIn:'user/loggedIn'
+    }),
   },
 
   methods: {
+    ...mapActions({
+      logoutUser: 'user/logoutUser',
+      checkUserState: 'user/setLoggedInState'
+    }),
     logout() {
-      localStorage.removeItem('token');
-      this.loggedIn = false;
-      this.$router.push({name: 'login'});
+      this.logoutUser()
+        .then( ()=>{
+          this.$router.push({name:'login'});
+        } )
+        .catch();
     }
   }
 

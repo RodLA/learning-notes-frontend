@@ -10,7 +10,7 @@
                                     <v-toolbar-title>Login</v-toolbar-title>
                                 </v-toolbar>
                                 <v-card-text>
-                                    <form ref="form" @submit.prevent="login()">
+                                    <form ref="form" @submit.prevent="loginUser()">
                                         <v-text-field v-model="form.email" name="email" label="email" type="text"
                                             placeholder="email"></v-text-field>
 
@@ -32,7 +32,9 @@
 </template>
   
 <script>
-import axios from 'axios';
+
+import { mapActions } from 'vuex';
+
 export default {
     name: 'auth-login',
     data() {
@@ -43,25 +45,16 @@ export default {
             }
         }
     },
-    components: {
-    },
     methods: {
-        login(){
-            axios
-                .post('http://127.0.0.1:8000/api/login', this.form)
-                .then((response) => {
+        ...mapActions({
+            login: 'user/loginUser'
+        }),
+        loginUser(){
+            this.login(this.form)
+                .then( ()=>{
+                    this.$router.push({name:'dashboard'});
+                } );
 
-                    let authToken = response.data.access_token;
-                    localStorage.setItem("token", authToken);
-
-                    localStorage.setItem("nombre_user",response.data.user.name)
-                    this.$router.push({name: 'dashboard'});
-
-                }).catch((response) => {
-                    //Error request, el back valida los campos (vacios o estructura)
-                    console.log(response.response.data.errors);
-                    console.log("error");
-                });
         }
     }
 }
