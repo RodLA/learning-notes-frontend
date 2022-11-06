@@ -50,14 +50,16 @@ export default {
             axios
                 .post('http://127.0.0.1:8000/api/login', this.form)
                 .then((response) => {
-                    //correcto
-                    console.log(response.data.user);
-                    console.log(response.data.access_token);
+
+                    let authToken = response.data.access_token;
+                    localStorage.setItem("token", authToken);
+
+                    localStorage.setItem("nombre_user",response.data.user.name)
+                    this.$router.push({name: 'dashboard'});
 
                 }).catch((response) => {
                     //Error request, el back valida los campos (vacios o estructura)
-                    //console.log(response.response.data.errors);
-                    console.log(response);
+                    console.log(response.response.data.errors);
                     console.log("error");
                 });
         }
