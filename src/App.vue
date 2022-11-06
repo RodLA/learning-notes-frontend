@@ -10,9 +10,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+      <v-btn target="_blank" @click="logout" v-if="loggedIn">
+        <span class="mr-2">Logout</span>
       </v-btn>
     </v-app-bar>
 
@@ -29,8 +28,26 @@ export default {
   name: 'App',
 
   data: () => ({
-    //
+    loggedIn: false,
   }),
+
+  mounted(){
+    console.log('me estas viendo xd');
+  },
+
+  created(){
+    if( localStorage.getItem('token') ){
+      this.loggedIn = true;
+    }
+  },
+
+  methods: {
+    logout() {
+      localStorage.removeItem('token');
+      this.loggedIn = false;
+      this.$router.push({name: 'login'});
+    }
+  }
 
 };
 </script>

@@ -3,8 +3,12 @@ import VueRouter from 'vue-router'
 
 //Views components
 import HomeView from '../views/HomeView.vue'
-import DashboardView from '../components/dashboard/Dashboard.vue';
+import Dashboard from '../components/dashboard/Dashboard.vue';
+import Login from '../components/auth/Login.vue';
+import Register from '../components/auth/Register.vue';
 
+//middleware
+import Middleware from '../middlewares/index.js';
 
 Vue.use(VueRouter)
 
@@ -17,22 +21,31 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    component: () => import('../views/AboutView.vue')
   },
   {
     path: '/login',
     name: 'login',
-    component: () => import(/* webpackChunkName: "about" */ '../components/auth/Login.vue')
+    component: Login,
+    meta: {
+      middleware: [Middleware.guest]
+    }
   },
   {
     path: '/register',
     name: 'register',
-    component: () => import(/* webpackChunkName: "about" */ '../components/auth/Register.vue')
+    component: Register,
+    meta: {
+      middleware: [Middleware.guest]
+    }
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: DashboardView
+    component: Dashboard,
+    meta: {
+      middleware: [Middleware.auth]
+    }
   },
 ]
 
@@ -41,5 +54,37 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+function nextCheck(context, middleware, index) {
+  const nextMiddleware = middleware[index];
+  
+  if(!nextMiddleware){
+    return context.next;
+  }
+  return (...parameters) => {
+    context.next(...parameters);
+    const nextMidd = nextCheck(context, middleware, index + 1);
+    
+    nextMiddleware({...context, next: nextMidd})
+  }
+}
+
+router.beforeEach( (to, from, next) => {
+  if(to.meta.middleware){
+    //establecer el middleware como Array
+    const middleware = Array.isArray(to.meta.middleware) ? to.meta.middleware : [to.meta.middleware];
+
+    const ctx = {
+      from,
+      next,
+      router,
+      to
+    }
+
+    const nextMiddleware = nextCheck(ctx, middleware, 1);
+    
+    return middleware[0]({...ctx, next: nextMiddleware});
+  }
+} );
 
 export default router
