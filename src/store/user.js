@@ -20,10 +20,11 @@ const mutations = {
 const actions = {
     loginUser(ctx, payload){
         return new Promise( (resolve, reject)=>{
+            console.log(payload);
             axios
-                .post('http://127.0.0.1:8000/api/login', payload )
+                .post('login', payload )
                 .then( (response)=>{
-                    localStorage.setItem('token', response.data);
+                    localStorage.setItem('token', response.data.access_token);
                     ctx.commit('setLoggedIn', true);
                     resolve(response);
                     // this.$router.push({name: 'dashboard'});
