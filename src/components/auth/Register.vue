@@ -72,7 +72,7 @@ export default {
     methods: {
         register() {
             axios
-                .post('http://127.0.0.1:8000/api/register', this.form)
+                .post('register', this.form)
                 .then((response) => {
                     //correcto
                     if (response.data.success) {                      
