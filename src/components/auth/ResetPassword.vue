@@ -10,22 +10,27 @@
                                     <v-toolbar-title>Login</v-toolbar-title>
                                 </v-toolbar>
                                 <v-card-text>
-                                    <form ref="form" @submit.prevent="loginUser()">
-                                        <v-text-field v-model="form.email" name="email" label="email" type="text"
+                                    <form ref="form" @submit.prevent="sendResetPassword()">
+
+                                        <v-text-field v-model="form.email" name="email" label="email" type="email"
                                             placeholder="email" required></v-text-field>
 
                                         <v-text-field v-model="form.password" name="password" label="Password"
                                             type="password" placeholder="password" required></v-text-field>
-                                        <v-btn type="submit" class="mt-4" color="primary" value="log in">Login</v-btn>
+                                        
+                                            <v-text-field v-model="form.password_confirmation" name="password_confirmation" label="password confirmation"
+                                            type="password" placeholder="password confirmation" required></v-text-field>
+
+                                        <v-btn type="submit" class="mt-4" color="primary" >Save</v-btn>
                                     </form>
-                                    <br>
-                                    <p>No tienes una cuenta? <router-link :to="{ name: 'register' }">Registrate</router-link></p>
+                                    
                                 </v-card-text>
                             </v-card>
 
                         </v-flex>
                     </v-layout>
                 </v-container>
+                <router-link :to="{name: 'login'}">Login</router-link>
             </v-main>
         </v-app>
     </div>
@@ -36,26 +41,27 @@
 import { mapActions } from 'vuex';
 
 export default {
-    name: 'auth-login',
+    name: 'reset-password',
     data() {
         return {
             form:{
                 email: "",
                 password: "",
+                password_confirmation: "",
             }
         }
     },
     methods: {
         ...mapActions({
-            login: 'user/loginUser'
+            resetPassword: 'user/resetPassword'
         }),
-        loginUser(){
-            this.login(this.form)
-                .then( ()=>{
-                    this.$router.push({name:'dashboard'});
-                } );
-
-        }
+        sendResetPassword(){
+            const token = this.$route.query.token;
+            this.resetPassword( { ...this.form, token } )
+                .then(()=>{
+                    this.$router.push( {name:'login'} );
+                })
+        },
     }
 }
 </script>

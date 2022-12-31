@@ -6,6 +6,8 @@ import HomeView from '../views/HomeView.vue'
 import Dashboard from '../components/dashboard/Dashboard.vue';
 import Login from '../components/auth/Login.vue';
 import Register from '../components/auth/Register.vue';
+import ForgotPassword from '../components/auth/ForgotPassword.vue';
+import ResetPassword from '../components/auth/ResetPassword.vue';
 
 //middleware
 import Middleware from '../middlewares/index.js';
@@ -16,12 +18,18 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta: {
+      middleware: [Middleware.general]
+    }
   },
   {
     path: '/about',
     name: 'about',
-    component: () => import('../views/AboutView.vue')
+    component: () => import('../views/AboutView.vue'),
+    meta: {
+      middleware: [Middleware.general]
+    }
   },
   {
     path: '/login',
@@ -35,6 +43,22 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register,
+    meta: {
+      middleware: [Middleware.guest]
+    }
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgotPassword',
+    component: ForgotPassword,
+    meta: {
+      middleware: [Middleware.guest]
+    }
+  },
+  {
+    path: '/reset-password',
+    name: 'resetPassword',
+    component: ResetPassword,
     meta: {
       middleware: [Middleware.guest]
     }
