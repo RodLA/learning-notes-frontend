@@ -10,22 +10,20 @@
                                     <v-toolbar-title>Login</v-toolbar-title>
                                 </v-toolbar>
                                 <v-card-text>
-                                    <form ref="form" @submit.prevent="loginUser()">
-                                        <v-text-field v-model="form.email" name="email" label="email" type="text"
+                                    <v-form ref="form" @submit.prevent="sendForgotPassword()">
+                                        <v-text-field v-model="form.email" name="email" label="email" type="email"
                                             placeholder="email" required></v-text-field>
 
-                                        <v-text-field v-model="form.password" name="password" label="Password"
-                                            type="password" placeholder="password" required></v-text-field>
-                                        <v-btn type="submit" class="mt-4" color="primary" value="log in">Login</v-btn>
-                                    </form>
-                                    <br>
-                                    <p>No tienes una cuenta? <router-link :to="{ name: 'register' }">Registrate</router-link></p>
+                                        <v-btn type="submit" class="mt-4" color="primary">SEND EMAIL</v-btn>
+                                    </v-form>
+
                                 </v-card-text>
                             </v-card>
 
                         </v-flex>
                     </v-layout>
                 </v-container>
+
             </v-main>
         </v-app>
     </div>
@@ -36,26 +34,28 @@
 import { mapActions } from 'vuex';
 
 export default {
-    name: 'auth-login',
+    name: 'forgot-password',
     data() {
         return {
             form:{
                 email: "",
-                password: "",
             }
         }
     },
     methods: {
         ...mapActions({
-            login: 'user/loginUser'
+            forgotPassword: "user/forgotPassword"
         }),
-        loginUser(){
-            this.login(this.form)
-                .then( ()=>{
-                    this.$router.push({name:'dashboard'});
-                } );
-
+        sendForgotPassword(){
+            this.forgotPassword( this.form ).then( (response)=>{
+                console.log(response);
+            }).catch(
+                ()=>{
+                    console.log("ERROR :C");   
+                }
+            );
         }
+        
     }
 }
 </script>
