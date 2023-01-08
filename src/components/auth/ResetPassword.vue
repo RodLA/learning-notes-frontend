@@ -53,14 +53,28 @@ export default {
     },
     methods: {
         ...mapActions({
-            resetPassword: 'user/resetPassword'
+            resetPassword: 'user/resetPassword',
+            addNotification: 'application/addNotification'
         }),
         sendResetPassword(){
             const token = this.$route.query.token;
             this.resetPassword( { ...this.form, token } )
                 .then(()=>{
-                    this.$router.push( {name:'login'} );
-                })
+
+                    this.addNotification({
+                        text: 'Password changed',
+                        show: true
+
+                    }).then( ()=>{
+                        this.$router.push( {name:'login'} );
+                    } );
+                    
+                }).catch( ()=> {
+                    this.addNotification({
+                        text: 'Failed to change password',
+                        show: true
+                    });
+                });
         },
     }
 }

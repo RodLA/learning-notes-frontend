@@ -44,14 +44,24 @@ export default {
     },
     methods: {
         ...mapActions({
-            forgotPassword: "user/forgotPassword"
+            forgotPassword: "user/forgotPassword",
+            addNotification: 'application/addNotification'
         }),
         sendForgotPassword(){
             this.forgotPassword( this.form ).then( (response)=>{
                 console.log(response);
+                this.addNotification({
+                    text: 'Email sent!',
+                    show: true
+                });
             }).catch(
                 ()=>{
-                    console.log("ERROR :C");   
+                    console.log("ERROR :C");
+
+                    this.addNotification({
+                        text: 'Failed Email sent!',
+                        show: true
+                    }); 
                 }
             );
         }

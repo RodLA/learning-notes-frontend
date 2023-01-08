@@ -47,13 +47,25 @@ export default {
     },
     methods: {
         ...mapActions({
-            login: 'user/loginUser'
+            login: 'user/loginUser',
+            addNotification: 'application/addNotification'
         }),
         loginUser(){
             this.login(this.form)
                 .then( ()=>{
-                    this.$router.push({name:'dashboard'});
-                } );
+                    this.addNotification({
+                        text: 'Welcome',
+                        show: true
+                    }).then( ()=>{
+                        this.$router.push({name:'dashboard'});
+                    });
+                    
+                } ).catch( ()=> {
+                    this.addNotification({
+                        text: 'Failed to login',
+                        show: true
+                    });
+                });
 
         }
     }

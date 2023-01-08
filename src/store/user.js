@@ -20,7 +20,6 @@ const mutations = {
 const actions = {
     loginUser(ctx, payload){
         return new Promise( (resolve, reject)=>{
-            console.log(payload);
             axios
                 .post('login', payload )
                 .then( (response)=>{
