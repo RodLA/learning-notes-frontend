@@ -10,7 +10,7 @@
                                     <v-toolbar-title>Registro</v-toolbar-title>
                                 </v-toolbar>
                                 <v-card-text>
-                                    <v-form ref="form" @submit.prevent="register()">
+                                    <v-form ref="form" @submit.prevent="registerUser()">
                                         <v-text-field v-model="form.name" name="name" label="Name" type="text"
                                             placeholder="name"></v-text-field>
 
@@ -39,7 +39,6 @@
   
 <script>
 
-import axios from 'axios';
 import { mapActions } from 'vuex';
 
 export default {
@@ -58,11 +57,11 @@ export default {
     },
     methods: {
         ...mapActions({
-            addNotification: 'application/addNotification'
+            addNotification: 'application/addNotification',
+            register: 'user/registerUser'
         }),
-        register() {
-            axios
-                .post('register', this.form)
+        registerUser() {
+            this.register(this.form)
                 .then((response) => {
                     //correcto
                     if (response.data.success) {
@@ -83,12 +82,11 @@ export default {
                         })
 
                     }
-
-                }).catch((response) => {
-                    //Error request, el back valida los campos (vacios o estructura)
-                    console.log(response.response.data.errors);
-                    console.log("error");
-                });
+            }).catch((response) => {
+                //Error request, el back valida los campos (vacios o estructura)
+                console.log(response.response.data.errors);
+                console.log("error");
+            });
         }
     }
 }
