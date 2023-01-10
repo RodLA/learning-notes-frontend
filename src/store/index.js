@@ -2,9 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 //modules
-import user from './user';
+import user from './user/index';
 import note from './note';
-import application from './application';
+import application from './application/index';
 
 Vue.use(Vuex)
 
