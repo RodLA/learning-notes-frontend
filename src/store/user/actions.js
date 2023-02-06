@@ -82,5 +82,19 @@ export default
                     reject(error)
                 });
         } ); 
-    }
+    },
+    me(ctx){
+        return new Promise( (resolve, reject)=>{
+            axios
+                .get('me')
+                .then( (response)=>{
+                    ctx.commit('setUserDetails', response.data );
+                    console.log( response.data );
+                    resolve(response);
+                } )
+                .catch( (error)=>{
+                    reject(error)
+                });
+        } ); 
+    },
 };
