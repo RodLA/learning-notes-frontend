@@ -9,6 +9,9 @@ import Register from '../components/auth/Register.vue';
 import ForgotPassword from '../components/auth/ForgotPassword.vue';
 import ResetPassword from '../components/auth/ResetPassword.vue';
 
+import AuthLayout from '../views/layouts/AuthLayout.vue';
+import AppLayout from '../views/layouts/AppLayout.vue';
+import Profile from '../components/profile/Profile.vue';
 //middleware
 import Middleware from '../middlewares/index.js';
 
@@ -32,44 +35,64 @@ const routes = [
     }
   },
   {
-    path: '/login',
-    name: 'login',
-    component: Login,
-    meta: {
-      middleware: [Middleware.guest]
-    }
+    path: '/',
+    component: AuthLayout,
+    children:[
+      {
+        path: 'login',
+        name: 'login',
+        component: Login,
+        meta: {
+          middleware: [Middleware.guest]
+        }
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: Register,
+        meta: {
+          middleware: [Middleware.guest]
+        }
+      },
+      {
+        path: '/forgot-password',
+        name: 'forgotPassword',
+        component: ForgotPassword,
+        meta: {
+          middleware: [Middleware.guest]
+        }
+      },
+      {
+        path: '/reset-password',
+        name: 'resetPassword',
+        component: ResetPassword,
+        meta: {
+          middleware: [Middleware.guest]
+        }
+      },
+    ]
   },
   {
-    path: '/register',
-    name: 'register',
-    component: Register,
-    meta: {
-      middleware: [Middleware.guest]
-    }
-  },
-  {
-    path: '/forgot-password',
-    name: 'forgotPassword',
-    component: ForgotPassword,
-    meta: {
-      middleware: [Middleware.guest]
-    }
-  },
-  {
-    path: '/reset-password',
-    name: 'resetPassword',
-    component: ResetPassword,
-    meta: {
-      middleware: [Middleware.guest]
-    }
-  },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: Dashboard,
-    meta: {
-      middleware: [Middleware.auth]
-    }
+    path: '/',
+    component: AppLayout,
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: Dashboard,
+        meta: {
+          middleware: [Middleware.auth]
+        }
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: Profile,
+        meta: {
+          middleware: [Middleware.auth]
+        }
+      },
+    ]
   },
 ]
 
