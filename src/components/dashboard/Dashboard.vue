@@ -1,6 +1,7 @@
 <template>
     <div>
         <h1 class="text-center">Dashboard</h1>
+        <router-link :to="{ name: 'profile' }">profile</router-link>
     </div>
 </template>
   
