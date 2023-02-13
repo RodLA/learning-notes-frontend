@@ -25,14 +25,14 @@
                             <v-toolbar-title>Change Details</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
-                            <form ref="changeDetailsForm" @submit.prevent="changeDetails()">
+                            <v-form ref="changeDetailsForm" @submit.prevent="changeDetails">
 
                                 <v-text-field v-model="userDetails.name" name="name" label="Name" type="text"
-                                    required></v-text-field>
+                                    :rules="requiredRules"></v-text-field>
 
                                 <v-btn type="submit" class="mt-4" color="primary">Save</v-btn>
 
-                            </form>
+                            </v-form>
                         </v-card-text>
                     </v-card>
 
@@ -47,19 +47,21 @@
                             <v-toolbar-title>Change Password</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
-                            <form ref="changePasswordForm" @submit.prevent="changePassword()">
+                            <v-form ref="changePasswordForm" @submit.prevent="changePassword">
 
                                 <v-text-field v-model="user.oldPassword" name="oldPassword" label="Old password" type="password"
-                                    placeholder="Old password" required></v-text-field>
+                                    :rules="[...requiredRules, ...passwordRules]"></v-text-field>
 
                                 <v-text-field v-model="user.newPassword" name="newPassword" label="New password" type="password"
-                                    placeholder="New password" required></v-text-field>
+                                    ref="newPassword"
+                                    :rules="[...requiredRules, ...passwordRules]"></v-text-field>
 
                                 <v-text-field v-model="user.newPasswordConfirmation" name="newPasswordConfirmation" label="New password Confirmation" type="password"
-                                    placeholder="New password Confirmation" required></v-text-field>
+                                    ref="newPasswordConfirmation"
+                                    :rules="[...requiredRules, ...passwordRules, newPasswordValidator]"></v-text-field>
 
                                 <v-btn type="submit" class="mt-4" color="primary" value="Change password">Change password</v-btn>
-                            </form>
+                            </v-form>
                         </v-card-text>
                     </v-card>
 
@@ -80,6 +82,22 @@
                     newPassword: '',
                     newPasswordConfirmation: ''
                 },
+                nameRules:[
+                    v => !!v || 'Name is required',
+                    // (v) => {
+                    //     if( v?.length > 0 ){
+                    //         return true
+                    //     } else{
+                    //         return 'My message'
+                    //     }
+                    // }
+                ],
+                requiredRules: [
+                    v => !!v || 'This field is required',
+                ],
+                passwordRules: [
+                    v => (!!v && v?.length >= 6 ) || 'Password is too short',
+                ],
             }
         },
         name: 'profile-view',
@@ -98,36 +116,50 @@
 
             changeDetails(){
 
-                this.updateDetails(this.userDetails)
-                    .then( ()=>{
-                        this.addNotification({
-                            text: 'Details changed',
-                            show: true
+                console.log( this.$refs.changeDetailsForm.validate() );
+
+                if(this.$refs.changeDetailsForm.validate()){
+
+                    this.updateDetails(this.userDetails)
+                        .then( ()=>{
+                            this.addNotification({
+                                text: 'Details changed',
+                                show: true
+                            });
+                            
+                        } ).catch( ()=> {
+                            this.addNotification({
+                                text: 'Failed to change details',
+                                show: true
+                            });
                         });
-                        
-                    } ).catch( ()=> {
-                        this.addNotification({
-                            text: 'Failed to change details',
-                            show: true
-                        });
-                    });
+                }
             },
             changePassword(){
 
-                this.changeUserPassword(this.user)
-                    .then( ()=>{
-                        this.addNotification({
-                            text: 'Password changed',
-                            show: true
+                console.log(this.$refs.changePasswordForm.validate());
+
+                if(this.$refs.changePasswordForm.validate() ){
+                    
+                    this.changeUserPassword(this.user)
+                        .then( ()=>{
+                            this.addNotification({
+                                text: 'Password changed',
+                                show: true
+                            });
+                            
+                        } ).catch( ()=> {
+                            this.addNotification({
+                                text: 'Failed to change password',
+                                show: true
+                            });
                         });
-                        
-                    } ).catch( ()=> {
-                        this.addNotification({
-                            text: 'Failed to change password',
-                            show: true
-                        });
-                    });
+                }
+            },
+            newPasswordValidator() {
+                return (this.user.newPasswordConfirmation === this.user.newPassword) || 'New password is not confirmed';
             }
+            
         }
     }
 </script>

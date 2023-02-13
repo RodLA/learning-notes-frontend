@@ -10,14 +10,14 @@
                                     <v-toolbar-title>Login</v-toolbar-title>
                                 </v-toolbar>
                                 <v-card-text>
-                                    <form ref="form" @submit.prevent="loginUser()">
+                                    <v-form ref="form" @submit.prevent="loginUser()">
                                         <v-text-field v-model="form.email" name="email" label="email" type="text"
-                                            placeholder="email" required></v-text-field>
+                                            :rules="emailRules" placeholder="email" required></v-text-field>
 
                                         <v-text-field v-model="form.password" name="password" label="Password"
-                                            type="password" placeholder="password" required></v-text-field>
+                                            :rules="passwordRules" type="password" placeholder="password" required></v-text-field>
                                         <v-btn type="submit" class="mt-4" color="primary" value="log in">Login</v-btn>
-                                    </form>
+                                    </v-form>
                                     <br>
                                     <p>No tienes una cuenta? <router-link :to="{ name: 'register' }">Registrate</router-link></p>
                                 </v-card-text>
@@ -42,7 +42,15 @@ export default {
             form:{
                 email: "",
                 password: "",
-            }
+            },
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => (!!v && v?.length >= 6 ) || 'Password is too short',
+            ],
         }
     },
     methods: {
@@ -51,7 +59,9 @@ export default {
             addNotification: 'application/addNotification'
         }),
         loginUser(){
-            this.login(this.form)
+
+            if(this.$refs.form.validate() ){
+                this.login(this.form)
                 .then( ()=>{
                     this.addNotification({
                         text: 'Welcome',
@@ -66,6 +76,7 @@ export default {
                         show: true
                     });
                 });
+            }
 
         }
     }

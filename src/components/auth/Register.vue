@@ -12,13 +12,13 @@
                                 <v-card-text>
                                     <v-form ref="form" @submit.prevent="registerUser()">
                                         <v-text-field v-model="form.name" name="name" label="Name" type="text"
-                                            placeholder="name"></v-text-field>
+                                            :rules="nameRules" placeholder="name"></v-text-field>
 
                                         <v-text-field v-model="form.email" name="email" label="Email" type="text"
-                                            placeholder="email"></v-text-field>
+                                            :rules="emailRules" placeholder="email"></v-text-field>
 
                                         <v-text-field v-model="form.password" name="password" label="Password"
-                                            type="password" placeholder="password"></v-text-field>
+                                            :rules="passwordRules" type="password" placeholder="password"></v-text-field>
                                         <v-btn type="submit" class="mt-4" color="primary" value="log in">Registrar
                                         </v-btn>
                                     </v-form>
@@ -51,6 +51,17 @@ export default {
                 email: "",
                 password: "",
             },
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => (!!v && v?.length >= 6 ) || 'Password is too short',
+            ],
+            nameRules: [
+                v => !!v || 'Name is required',
+            ],
         }
     },
     components: {
@@ -61,32 +72,34 @@ export default {
             register: 'user/registerUser'
         }),
         registerUser() {
-            this.register(this.form)
-                .then((response) => {
-                    //correcto
-                    if (response.data.success) {
-                        
-                        this.addNotification({
-                            show: true,
-                            text:'Success!'
-                        }).then( ()=>{
-                            this.$router.push({
-                                name:'login'
+            if(this.$refs.form.validate() ){
+                this.register(this.form)
+                    .then((response) => {
+                        //correcto
+                        if (response.data.success) {
+                            
+                            this.addNotification({
+                                show: true,
+                                text:'Success!'
+                            }).then( ()=>{
+                                this.$router.push({
+                                    name:'login'
+                                })
+                            } );
+                        }
+                        else {
+                            this.addNotification({
+                                show: true,
+                                text:'Failed!'
                             })
-                        } );
-                    }
-                    else {
-                        this.addNotification({
-                            show: true,
-                            text:'Failed!'
-                        })
 
-                    }
-            }).catch((response) => {
-                //Error request, el back valida los campos (vacios o estructura)
-                console.log(response.response.data.errors);
-                console.log("error");
-            });
+                        }
+                }).catch((response) => {
+                    //Error request, el back valida los campos (vacios o estructura)
+                    console.log(response.response.data.errors);
+                    console.log("error");
+                });
+            }
         }
     }
 }
