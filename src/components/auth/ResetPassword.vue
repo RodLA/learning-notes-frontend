@@ -10,19 +10,19 @@
                                     <v-toolbar-title>Login</v-toolbar-title>
                                 </v-toolbar>
                                 <v-card-text>
-                                    <form ref="form" @submit.prevent="sendResetPassword()">
+                                    <v-form ref="form" @submit.prevent="sendResetPassword()">
 
                                         <v-text-field v-model="form.email" name="email" label="email" type="email"
-                                            placeholder="email" required></v-text-field>
+                                            :rules="emailRules" placeholder="email" required></v-text-field>
 
                                         <v-text-field v-model="form.password" name="password" label="Password"
-                                            type="password" placeholder="password" required></v-text-field>
+                                            :rules="passwordRules" type="password" placeholder="password" required></v-text-field>
                                         
                                             <v-text-field v-model="form.password_confirmation" name="password_confirmation" label="password confirmation"
-                                            type="password" placeholder="password confirmation" required></v-text-field>
+                                            :rules="[...passwordRules, passwordValidator]" type="password" placeholder="password confirmation" required></v-text-field>
 
                                         <v-btn type="submit" class="mt-4" color="primary" >Save</v-btn>
-                                    </form>
+                                    </v-form>
                                     
                                 </v-card-text>
                             </v-card>
@@ -48,7 +48,15 @@ export default {
                 email: "",
                 password: "",
                 password_confirmation: "",
-            }
+            },
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => (!!v && v?.length >= 6 ) || 'Password is too short',
+            ],
         }
     },
     methods: {
@@ -57,24 +65,30 @@ export default {
             addNotification: 'application/addNotification'
         }),
         sendResetPassword(){
-            const token = this.$route.query.token;
-            this.resetPassword( { ...this.form, token } )
-                .then(()=>{
 
-                    this.addNotification({
-                        text: 'Password changed',
-                        show: true
+            if(this.$refs.form.validate() ){
+                const token = this.$route.query.token;
+                this.resetPassword( { ...this.form, token } )
+                    .then(()=>{
 
-                    }).then( ()=>{
-                        this.$router.push( {name:'login'} );
-                    } );
-                    
-                }).catch( ()=> {
-                    this.addNotification({
-                        text: 'Failed to change password',
-                        show: true
+                        this.addNotification({
+                            text: 'Password changed',
+                            show: true
+
+                        }).then( ()=>{
+                            this.$router.push( {name:'login'} );
+                        } );
+                        
+                    }).catch( ()=> {
+                        this.addNotification({
+                            text: 'Failed to change password',
+                            show: true
+                        });
                     });
-                });
+            }
+        },
+        passwordValidator() {
+            return (this.form.password_confirmation === this.form.password) || 'New password is not confirmed';
         },
     }
 }

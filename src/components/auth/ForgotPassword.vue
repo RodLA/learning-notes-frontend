@@ -12,7 +12,7 @@
                                 <v-card-text>
                                     <v-form ref="form" @submit.prevent="sendForgotPassword()">
                                         <v-text-field v-model="form.email" name="email" label="email" type="email"
-                                            placeholder="email" required></v-text-field>
+                                            :rules="emailRules" placeholder="email" required></v-text-field>
 
                                         <v-btn type="submit" class="mt-4" color="primary">SEND EMAIL</v-btn>
                                     </v-form>
@@ -39,7 +39,11 @@ export default {
         return {
             form:{
                 email: "",
-            }
+            },
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
         }
     },
     methods: {
@@ -48,22 +52,23 @@ export default {
             addNotification: 'application/addNotification'
         }),
         sendForgotPassword(){
-            this.forgotPassword( this.form ).then( (response)=>{
-                console.log(response);
-                this.addNotification({
-                    text: 'Email sent!',
-                    show: true
-                });
-            }).catch(
-                ()=>{
-                    console.log("ERROR :C");
+            if(this.$refs.form.validate() ){
 
+                this.forgotPassword( this.form ).then( (response)=>{
+                    console.log(response);
                     this.addNotification({
-                        text: 'Failed Email sent!',
+                        text: 'Email sent!',
                         show: true
-                    }); 
-                }
-            );
+                    });
+                }).catch(
+                    ()=>{
+                        this.addNotification({
+                            text: 'Failed Email sent!',
+                            show: true
+                        }); 
+                    }
+                );
+            }
         }
         
     }
