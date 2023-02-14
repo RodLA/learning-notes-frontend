@@ -40,9 +40,10 @@
 <script>
 
 import { mapActions } from 'vuex';
+import PasswordValidationMixin from "../../mixins/passwordValidationMixin";
 
 export default {
-
+    mixins: [PasswordValidationMixin],
     name: 'auth-register',
     data() {
         return {
@@ -51,14 +52,6 @@ export default {
                 email: "",
                 password: "",
             },
-            emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-            ],
-            passwordRules: [
-                v => !!v || 'Password is required',
-                v => (!!v && v?.length >= 6 ) || 'Password is too short',
-            ],
             nameRules: [
                 v => !!v || 'Name is required',
             ],
