@@ -54,7 +54,7 @@
 
                                 <v-text-field v-model="user.newPassword" name="newPassword" label="New password" type="password"
                                     ref="newPassword"
-                                    :rules="[...requiredRules, ...passwordRules]"></v-text-field>
+                                    :rules="[...requiredRules, ...passwordRules, newPasswordValidator]"></v-text-field>
 
                                 <v-text-field v-model="user.newPasswordConfirmation" name="newPasswordConfirmation" label="New password Confirmation" type="password"
                                     ref="newPasswordConfirmation"
@@ -73,8 +73,11 @@
 
 <script>
     import {mapGetters, mapActions} from "vuex";
+    //import PasswordValidationMixin from "../../mixins/passwordValidationMixin";
+    import PasswordValidationMixin from "@/mixins/passwordValidationMixin";
 
     export default{
+        mixins: [PasswordValidationMixin],
         data(){
             return {
                 user: {
@@ -91,12 +94,6 @@
                     //         return 'My message'
                     //     }
                     // }
-                ],
-                requiredRules: [
-                    v => !!v || 'This field is required',
-                ],
-                passwordRules: [
-                    v => (!!v && v?.length >= 6 ) || 'Password is too short',
                 ],
             }
         },
@@ -115,9 +112,6 @@
             }),
 
             changeDetails(){
-
-                console.log( this.$refs.changeDetailsForm.validate() );
-
                 if(this.$refs.changeDetailsForm.validate()){
 
                     this.updateDetails(this.userDetails)
@@ -136,9 +130,6 @@
                 }
             },
             changePassword(){
-
-                console.log(this.$refs.changePasswordForm.validate());
-
                 if(this.$refs.changePasswordForm.validate() ){
                     
                     this.changeUserPassword(this.user)
@@ -158,8 +149,7 @@
             },
             newPasswordValidator() {
                 return (this.user.newPasswordConfirmation === this.user.newPassword) || 'New password is not confirmed';
-            }
-            
+            },
         }
     }
 </script>
